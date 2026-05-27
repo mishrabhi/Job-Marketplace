@@ -4,38 +4,40 @@ const Student = require("../models/student");
 const generateToken = require("../utils/generateToken");
 
 //register company
-exports.regosterCompany = async (req, res) => {
-    try {
-        const {name, email, password, description, location} = req.body;
-        const existingCompany = await Company.findOne({ email });
-        if(existingCompany){
-            return res.status(400).json({
-                success: false,
-                message: "Company already exists"
-            })
-        }
-        const hashedPassword =await bcrypt.hash(
-            password, 10
-        );
+exports.registerCompany = async (req, res) => {
+  try {
+    const { name, email, password, description, location } = req.body;
+    const existingCompany = await Company.findOne({ email });
+    if (existingCompany) {
+      return res.status(400).json({
+        success: false,
+        message: "Company already exists",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const company = await Company.create({
-            name, email, password: hashedPassword, description, location
-        });
+    const company = await Company.create({
+      name,
+      email,
+      password: hashedPassword,
+      description,
+      location,
+    });
 
-        const token = generateToken(company)
-        return res.status(201).json({
-            success: true,
-            message: "Company generated successfully!",
-            token,
-            data: company
-        })
-    } catch (error) {
-        return res.status(500).json({
+    const token = generateToken(company);
+    return res.status(201).json({
+      success: true,
+      message: "Company generated successfully!",
+      token,
+      data: company,
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
-    }
-}
+  }
+};
 
 //login company
 exports.loginCompany = async (req, res) => {
@@ -51,10 +53,7 @@ exports.loginCompany = async (req, res) => {
       });
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      password,
-      company.password
-    );
+    const isPasswordMatched = await bcrypt.compare(password, company.password);
 
     if (!isPasswordMatched) {
       return res.status(400).json({
@@ -82,16 +81,9 @@ exports.loginCompany = async (req, res) => {
 //register student
 exports.registerStudent = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      password,
-      skills,
-      levels,
-    } = req.body;
+    const { name, email, password, skills, levels } = req.body;
 
-    const existingStudent =
-      await Student.findOne({ email });
+    const existingStudent = await Student.findOne({ email });
 
     if (existingStudent) {
       return res.status(400).json({
@@ -100,10 +92,7 @@ exports.registerStudent = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const student = await Student.create({
       name,
@@ -143,10 +132,7 @@ exports.loginStudent = async (req, res) => {
       });
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      password,
-      student.password
-    );
+    const isPasswordMatched = await bcrypt.compare(password, student.password);
 
     if (!isPasswordMatched) {
       return res.status(400).json({

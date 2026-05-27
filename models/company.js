@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const newCompanySchema = new.mongoose.Schema({
+const newCompanySchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true,"Company name is required"],
